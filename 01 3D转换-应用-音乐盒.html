@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS3 3D转换</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #FFF;
+    }
+
+    .music-box {
+      width: 300px;
+      height: 300px;
+      margin: 50px auto;
+      position: relative;
+      perspective: 1000px;
+    }
+
+    .music-box::before, .music-box::after {
+      content: "";
+      display: block;/*可以不要*/
+      width: 100%;
+      height: 100%;
+      background-color: red;
+      position: absolute;
+      left:0;
+      top:0;
+      border-radius: 50%;
+    }
+    /*设置后面的图片*/
+    .music-box::before{
+      background: url("images/musict.jpg");
+    }
+    /*设置前面的图片*/
+    .music-box::after{
+      background: url("images/musicb.jpg");
+      transform-origin: bottom center;/*定义旋转的原点*/
+      transition: all 1s linear;/*过渡的方式沿着x轴方向旋转180度*/
+    }
+    .music-box:hover::after{
+       transform: rotateX(-180deg);
+    }
+
+
+
+
+    /*伪元素实现*/
+    /*.music-box::before,.music-box::after{*/
+    /*content: "";*/
+    /*position: absolute;*/
+    /*width: 100%;*/
+    /*height: 100%;*/
+    /*left:0;*/
+    /*top:0;*/
+    /*background-color: red;*/
+    /*border-radius: 50%;*/
+    /*}*/
+    /*.music-box::before{*/
+    /*background: url("images/musict.jpg") no-repeat;*/
+    /*}*/
+    /*.music-box::after{*/
+    /*background: url("images/musicb.jpg") no-repeat;*/
+    /*transform-origin: center bottom;*/
+    /*transition: all 1s;*/
+    /*}*/
+    /*.music-box:hover::after{*/
+    /*transform: rotateX(-180deg);*/
+    /*}*/
+
+
+  </style>
+</head>
+<body>
+<div class="music-box"></div>
+</body>
+</html>
