@@ -3,6 +3,94 @@
 <head>
 	<meta charset="UTF-8">
 	<title>我的网站</title>
+	<style type="text/css">
+    * {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      border: 0;
+    }
+
+    .all {
+      width: 500px;
+      height: 200px;
+      padding: 7px;
+      border: 1px solid #ccc;
+      margin: 100px auto;
+      position: relative;
+    }
+
+    .screen {
+      width: 500px;
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .screen li {
+      width: 500px;
+      height: 200px;
+      overflow: hidden;
+      float: left;
+    }
+
+    .screen ul {
+      position: absolute;
+      left: 0;
+      top: 0px;
+      width: 3000px;
+    }
+
+    .all ol {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      line-height: 20px;
+      text-align: center;
+    }
+
+    .all ol li {
+      float: left;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border: 1px solid #ccc;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    .all ol li.current {
+      background: #DB192A;
+    }
+
+    #arr {
+      display: none;
+    }
+
+    #arr span {
+      width: 40px;
+      height: 40px;
+      position: absolute;
+      left: 5px;
+      top: 50%;
+      margin-top: -20px;
+      background: #000;
+      cursor: pointer;
+      line-height: 40px;
+      text-align: center;
+      font-weight: bold;
+      font-family: '黑体';
+      font-size: 30px;
+      color: #fff;
+      opacity: 0.3;
+      border: 1px solid #fff;
+    }
+
+    #arr #right {
+      right: 5px;
+      left: auto;
+    }
+  </style>
 	<style>
 		body {
 			margin: 0;
@@ -79,4 +167,128 @@
 		</li>
 	</ul>
 </body>
+	<div class="all" id='box'>
+  <!--相框-->
+  <div class="screen">
+    <ul>
+      <li><img src="images/1.jpg" width="500" height="200"/></li>
+      <li><img src="images/2.jpg" width="500" height="200"/></li>
+      <li><img src="images/3.jpg" width="500" height="200"/></li>
+      <li><img src="images/4.jpg" width="500" height="200"/></li>
+      <li><img src="images/5.jpg" width="500" height="200"/></li>
+    </ul>
+    <ol>
+    </ol>
+  </div>
+  <div id="arr">
+    <span id="left">&lt;</span><span id="right">&gt;</span>
+  </div>
+</div>
+<script src="common.js"></script>
+	<script>
+  //获取最外面的div
+  var box = my$("box");
+  //获取相框
+  var screen = box.children[0];
+  //获取相框的宽度
+  var imgWidth = screen.offsetWidth;
+  //获取ul
+  var ulObj = screen.children[0];
+  //获取ul中的li
+  var ulLiObj = ulObj.children;
+  //获取ol
+  var olObj = screen.children[1];
+  //获取的是左右焦点的div
+  var arr = my$("arr");
+  //获取左边的按钮
+  var left = my$("left");
+  //获取右边的按钮
+  var right = my$("right");
+
+
+  var pic = 0;
+  //页面加载后先创建小按钮,根据ul中的li个个数来创建li,把li加入到ol中
+  for (var i = 0; i < ulLiObj.length; i++) {
+    //创建li
+    var liObj = document.createElement("li");
+    //把li加入到ol中
+    olObj.appendChild(liObj);
+    setInnerText(liObj, (i + 1));//兼容代码
+    //为每个ol中的li添加一个自定义属性存储索引值
+    liObj.setAttribute("index", i);
+    //为每个li注册鼠标进入事件
+    liObj.onmouseover = function () {
+      //先把ol中所有的li的背景颜色全部干掉
+      for (var j = 0; j < olObj.children.length; j++) {
+        olObj.children[j].removeAttribute("class");
+      }
+      //设置当前鼠标进入的li有背景颜色
+      this.className = "current";
+      //移动ul
+      //获取鼠标进入的ol中的li的索引值
+      pic = this.getAttribute("index");
+      animate(ulObj, -pic * imgWidth);
+    };
+
+
+  }
+
+
+  //for循环结束后的位置
+  //设置ol中的第一个li标签有默认的背景颜色
+  olObj.children[0].className = "current";
+  //设置ul中追加一个图片,这个图片就是ul中第一个图片,要做无缝连接的效果
+  ulObj.appendChild(ulObj.children[0].cloneNode(true));
+
+  //页面加载后需要图片自动的移动
+  var timeId=setInterval(f1, 1000);
+
+  //鼠标进入
+  box.onmouseover = function () {
+    arr.style.display = "block";
+    clearInterval(timeId);
+  };
+  //鼠标离开
+  box.onmouseout = function () {
+    arr.style.display = "none";
+    timeId=setInterval(f1, 2000);
+  };
+
+  //为右边的按钮注册点击事件
+  right.onclick = f1;
+  function f1() {
+    if (pic == ulLiObj.length - 1) {
+      pic = 0;
+      ulObj.style.left = -pic * imgWidth + "px";
+    }
+    pic++;
+    animate(ulObj, -pic * imgWidth);
+    //首先干掉所有的ol中的li的背景颜色
+    for (var i = 0; i < olObj.children.length; i++) {
+      olObj.children[i].removeAttribute("class");
+    }
+    //判断---pic的值是不是索引为5,设置第一个ol中li的背景颜色
+    if (pic == ulLiObj.length - 1) {
+      //ol中第一个li有背景颜色
+      olObj.children[0].className = "current";
+    } else {
+      olObj.children[pic].className = "current";
+    }
+  }
+  //为左边的按钮注册点击事件
+  left.onclick = function () {
+    if (pic == 0) {
+      pic = ulLiObj.length - 1;//5
+      ulObj.style.left = -pic * imgWidth + "px";//此时显示的是第六张--用户看到的第一个图
+    }
+    pic--;
+    animate(ulObj, -pic * imgWidth);
+    //先干掉所有的li的样式
+    for (var i = 0; i < olObj.children.length; i++) {
+      olObj.children[i].removeAttribute("class");
+    }
+    //设置对应的按钮的类样式
+    olObj.children[pic].className = "current";
+  };
+
 </html>
